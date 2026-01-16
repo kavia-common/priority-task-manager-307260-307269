@@ -99,7 +99,7 @@ function App() {
     if (isTop) setTopTasks((prev) => [...prev, newTask]);
     else setOtherTasks((prev) => [...prev, newTask]);
 
-    // Immediately open edit modal for a good "checklist" flow.
+    // Immediately open edit modal for a "paper checklist" flow.
     setEditing({ section, id: newTask.id, text: "" });
   }
 
@@ -114,6 +114,13 @@ function App() {
   function requestEdit(section, task) {
     /** Open the edit modal with the task prefilled. */
     setEditing({ section, id: task.id, text: task.text });
+  }
+
+  // PUBLIC_INTERFACE
+  function deleteTask(section, id) {
+    /** Delete a task from a section. */
+    const setter = section === "top" ? setTopTasks : setOtherTasks;
+    setter((prev) => prev.filter((t) => t.id !== id));
   }
 
   // PUBLIC_INTERFACE
@@ -135,13 +142,6 @@ function App() {
     setter((prev) => prev.map((t) => (t.id === editing.id ? { ...t, text: trimmed } : t)));
 
     setEditing(null);
-  }
-
-  // PUBLIC_INTERFACE
-  function deleteTask(section, id) {
-    /** Delete a task from a section. */
-    const setter = section === "top" ? setTopTasks : setOtherTasks;
-    setter((prev) => prev.filter((t) => t.id !== id));
   }
 
   // PUBLIC_INTERFACE
@@ -172,82 +172,84 @@ function App() {
 
   return (
     <div className="App">
-      <main className="page">
-        <header className="header">
-          <div className="headerText">
-            <h1 className="title">Checklist</h1>
-            <p className="subtitle">
-              {stats.done}/{stats.total} done
-              <span className="dot" aria-hidden="true">
-                •
-              </span>
-              Top priority: {topTasks.length}/{LIMITS.top}
-              <span className="dot" aria-hidden="true">
-                •
-              </span>
-              Other tasks: {otherTasks.length}/{LIMITS.other}
-            </p>
+      <main className="page" aria-label="Priority to-do checklist">
+        <div className="paper" role="document" aria-label="Checklist sheet">
+          <header className="paperHeader">
+            <div className="paperHeaderLeft">
+              <p className="paperKicker">PRIORITY</p>
+              <h1 className="paperTitle">TO-DO</h1>
+              <p className="paperSub">
+                <span className="paperStat">
+                  {stats.done}/{stats.total} done
+                </span>
+                <span className="paperDivider" aria-hidden="true">
+                  |
+                </span>
+                <span className="paperStat">Top {topTasks.length}/{LIMITS.top}</span>
+                <span className="paperDivider" aria-hidden="true">
+                  |
+                </span>
+                <span className="paperStat">Other {otherTasks.length}/{LIMITS.other}</span>
+              </p>
+            </div>
+
+            <div className="paperHeaderRight" aria-label="Actions">
+              <button className="paperBtn" type="button" onClick={() => addTask("top")} disabled={topAtCapacity}>
+                + Top
+              </button>
+              <button className="paperBtn" type="button" onClick={() => addTask("other")} disabled={otherAtCapacity}>
+                + Other
+              </button>
+              <button className="paperBtn paperBtnGhost" type="button" onClick={clearCompleted} disabled={stats.done === 0}>
+                Clear done
+              </button>
+            </div>
+          </header>
+
+          <div className="paperBody">
+            <TaskBlock
+              title="TOP PRIORITY"
+              section="top"
+              tasks={topTasks}
+              limit={LIMITS.top}
+              atCapacity={topAtCapacity}
+              onAdd={() => addTask("top")}
+              onToggle={(id) => toggleTask("top", id)}
+              onEdit={(task) => requestEdit("top", task)}
+              onDelete={(id) => deleteTask("top", id)}
+            />
+
+            <TaskBlock
+              title="OTHER TASKS"
+              section="other"
+              tasks={otherTasks}
+              limit={LIMITS.other}
+              atCapacity={otherAtCapacity}
+              onAdd={() => addTask("other")}
+              onToggle={(id) => toggleTask("other", id)}
+              onEdit={(task) => requestEdit("other", task)}
+              onDelete={(id) => deleteTask("other", id)}
+            />
           </div>
 
-          <div className="headerActions">
-            <button className="btn" type="button" onClick={() => addTask("top")} disabled={topAtCapacity}>
-              Add top priority
-            </button>
-            <button className="btn" type="button" onClick={() => addTask("other")} disabled={otherAtCapacity}>
-              Add other task
-            </button>
-            <button className="btn btn-ghost" type="button" onClick={clearCompleted} disabled={stats.done === 0}>
-              Clear completed
-            </button>
-          </div>
-        </header>
+          <section className="notesBlock" aria-label="Notes">
+            <div className="notesHeader">
+              <h2 className="blockTitle">NOTES</h2>
+              <p className="blockHint">Saved locally</p>
+            </div>
+            <textarea
+              className="notesPaper"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="…"
+              rows={6}
+            />
+          </section>
 
-        <section className="sheet" aria-label="Task lists">
-          <TaskSection
-            title="Top priority"
-            hint={`Max ${LIMITS.top} tasks`}
-            section="top"
-            tasks={topTasks}
-            atCapacity={topAtCapacity}
-            onAdd={() => addTask("top")}
-            onToggle={(id) => toggleTask("top", id)}
-            onEdit={(task) => requestEdit("top", task)}
-            onDelete={(id) => deleteTask("top", id)}
-          />
-
-          <TaskSection
-            title="Other tasks"
-            hint={`Max ${LIMITS.other} tasks`}
-            section="other"
-            tasks={otherTasks}
-            atCapacity={otherAtCapacity}
-            onAdd={() => addTask("other")}
-            onToggle={(id) => toggleTask("other", id)}
-            onEdit={(task) => requestEdit("other", task)}
-            onDelete={(id) => deleteTask("other", id)}
-          />
-        </section>
-
-        <section className="notes" aria-label="Notes">
-          <div className="notesHeader">
-            <h2 className="sectionTitle">Notes</h2>
-            <p className="sectionHint">Freeform notes saved locally</p>
-          </div>
-
-          <textarea
-            className="notesArea"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Write anything you want to remember…"
-            rows={8}
-          />
-        </section>
-
-        <footer className="footer">
-          <p className="footerText">
-            Stored locally in your browser (localStorage). No account, no backend.
-          </p>
-        </footer>
+          <footer className="paperFooter">
+            <p className="paperFooterText">Local-only checklist (browser storage).</p>
+          </footer>
+        </div>
       </main>
 
       {editing ? (
@@ -263,11 +265,11 @@ function App() {
         >
           <div className="modal">
             <h3 id="edit-title" className="modalTitle">
-              Edit task
+              Edit item
             </h3>
 
             <label className="modalLabel" htmlFor="edit-input">
-              Task text
+              Text
             </label>
             <input
               id="edit-input"
@@ -310,79 +312,83 @@ function App() {
 }
 
 // PUBLIC_INTERFACE
-function TaskSection({ title, hint, section, tasks, atCapacity, onAdd, onToggle, onEdit, onDelete }) {
-  /** Renders one task section with bounded list and capacity message. */
-  const empty = tasks.length === 0;
+function TaskBlock({ title, section, tasks, limit, atCapacity, onAdd, onToggle, onEdit, onDelete }) {
+  /** Renders one paper-styled task block with a ruled checklist. */
+  const rows = useMemo(() => {
+    // Render exactly `limit` rows for a paper-like fixed checklist.
+    const result = [];
+    for (let i = 0; i < limit; i += 1) {
+      result.push(tasks[i] || null);
+    }
+    return result;
+  }, [tasks, limit]);
 
   return (
-    <div className="section" data-section={section}>
-      <div className="sectionHeader">
+    <section className="block" aria-label={title}>
+      <div className="blockHeader">
         <div>
-          <h2 className="sectionTitle">{title}</h2>
-          <p className="sectionHint">{hint}</p>
+          <h2 className="blockTitle">{title}</h2>
+          <p className="blockHint">Max {limit}</p>
         </div>
-
-        <div className="sectionActions">
-          <button className="btn btn-small" type="button" onClick={onAdd} disabled={atCapacity}>
-            Add
-          </button>
-        </div>
+        <button className="paperBtn paperBtnSmall" type="button" onClick={onAdd} disabled={atCapacity} aria-label={`Add to ${title}`}>
+          +
+        </button>
       </div>
 
       {atCapacity ? (
-        <div className="capacityBanner" role="status">
-          This section is full. Delete a task to add another.
-        </div>
+        <p className="capacityNote" role="status">
+          Full — delete one to add.
+        </p>
       ) : null}
 
-      <ul className="taskList" aria-label={`${title} list`}>
-        {empty ? (
-          <li className="emptyRow">
-            <span className="emptyText">No tasks yet.</span>
-          </li>
-        ) : null}
+      <ol className="ruledList" data-section={section}>
+        {rows.map((task, idx) => {
+          const isEmpty = !task;
+          const label = task?.text?.trim() ? task.text : "Blank item";
 
-        {tasks.map((task) => (
-          <li key={task.id} className={`taskRow ${task.done ? "isDone" : ""}`}>
-            <label className="checkWrap">
-              <input
-                className="checkbox"
-                type="checkbox"
-                checked={task.done}
-                onChange={() => onToggle(task.id)}
-                aria-label={task.done ? `Mark "${task.text}" as not done` : `Mark "${task.text}" as done`}
-              />
-              <span className="checkVisual" aria-hidden="true" />
-            </label>
+          return (
+            <li key={task?.id || `empty-${section}-${idx}`} className={`ruledRow ${task?.done ? "isDone" : ""} ${isEmpty ? "isEmpty" : ""}`}>
+              <label className="boxLabel">
+                <input
+                  className="boxInput"
+                  type="checkbox"
+                  checked={Boolean(task?.done)}
+                  onChange={() => (task ? onToggle(task.id) : null)}
+                  disabled={!task}
+                  aria-label={task ? (task.done ? `Mark "${label}" as not done` : `Mark "${label}" as done`) : "Empty row"}
+                />
+                <span className="boxVisual" aria-hidden="true" />
+              </label>
 
-            <button
-              type="button"
-              className="taskTextBtn"
-              onClick={() => onEdit(task)}
-              aria-label={`Edit task: ${task.text || "Untitled task"}`}
-              title="Edit"
-            >
-              <span className="taskText">{task.text || <em className="untitled">Untitled task</em>}</span>
-            </button>
+              {task ? (
+                <button type="button" className="ruledTextBtn" onClick={() => onEdit(task)} title="Edit">
+                  <span className="ruledText">{task.text}</span>
+                </button>
+              ) : (
+                <span className="ruledPlaceholder" aria-hidden="true">
+                  &nbsp;
+                </span>
+              )}
 
-            <div className="rowActions">
-              <button className="iconBtn" type="button" onClick={() => onEdit(task)} aria-label="Edit task" title="Edit">
-                Edit
-              </button>
-              <button
-                className="iconBtn iconBtnDanger"
-                type="button"
-                onClick={() => onDelete(task.id)}
-                aria-label="Delete task"
-                title="Delete"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+              <div className="ruledActions">
+                {task ? (
+                  <>
+                    <button className="miniBtn" type="button" onClick={() => onEdit(task)}>
+                      Edit
+                    </button>
+                    <button className="miniBtn miniBtnDanger" type="button" onClick={() => onDelete(task.id)}>
+                      X
+                    </button>
+                  </>
+                ) : (
+                  <span className="ruledActionsSpacer" aria-hidden="true" />
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
   );
 }
 
