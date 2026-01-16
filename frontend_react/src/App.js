@@ -176,20 +176,10 @@ function App() {
         <div className="paper" role="document" aria-label="Checklist sheet">
           <header className="paperHeader">
             <div className="paperHeaderLeft">
-              <p className="paperKicker">PRIORITY</p>
-              <h1 className="paperTitle">TO-DO</h1>
+              <p className="paperKicker">Priority To-do Checklist</p>
               <p className="paperSub">
-                <span className="paperStat">
-                  {stats.done}/{stats.total} done
-                </span>
-                <span className="paperDivider" aria-hidden="true">
-                  |
-                </span>
-                <span className="paperStat">Top {topTasks.length}/{LIMITS.top}</span>
-                <span className="paperDivider" aria-hidden="true">
-                  |
-                </span>
-                <span className="paperStat">Other {otherTasks.length}/{LIMITS.other}</span>
+                <span>Date:</span>
+                <span aria-hidden="true" style={{ flex: 1, borderBottom: "1px solid #000", height: 0, transform: "translateY(-2px)" }} />
               </p>
             </div>
 
@@ -208,7 +198,7 @@ function App() {
 
           <div className="paperBody">
             <TaskBlock
-              title="TOP PRIORITY"
+              title="# No. Top priority Status"
               section="top"
               tasks={topTasks}
               limit={LIMITS.top}
@@ -220,7 +210,7 @@ function App() {
             />
 
             <TaskBlock
-              title="OTHER TASKS"
+              title="# No. Other tasks Status"
               section="other"
               tasks={otherTasks}
               limit={LIMITS.other}
@@ -328,7 +318,7 @@ function TaskBlock({ title, section, tasks, limit, atCapacity, onAdd, onToggle, 
       <div className="blockHeader">
         <div>
           <h2 className="blockTitle">{title}</h2>
-          <p className="blockHint">Max {limit}</p>
+          <p className="blockHint"> </p>
         </div>
         <button className="paperBtn paperBtnSmall" type="button" onClick={onAdd} disabled={atCapacity} aria-label={`Add to ${title}`}>
           +

@@ -1,126 +1,107 @@
 :root {
-  /* Paper checklist theme */
-  --bg: #efefef;
-  --paper: #fbfbf7;
-  --paper-edge: #e6e3da;
+  /* PDF-like printable checklist theme */
+  --page-bg: #ffffff;
 
-  --ink: #111111;
-  --muted: #555555;
+  --ink: #000000;
+  --muted: #111111;
 
-  --rule: rgba(17, 17, 17, 0.14);
-  --rule-strong: rgba(17, 17, 17, 0.22);
-
-  --shadow: rgba(0, 0, 0, 0.12);
-
-  --radius: 14px;
+  /* Very light grid/line like a PDF form */
+  --line: #000000;
 
   --font: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  --title: ui-rounded, system-ui, -apple-system, Segoe UI, Inter, Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+/* App canvas */
 .App {
   min-height: 100vh;
-  background: var(--bg);
+  background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font);
 }
 
+/* Center the sheet like a PDF page preview */
 .page {
-  padding: 28px 16px 44px;
+  padding: 24px 12px;
   display: grid;
   justify-content: center;
 }
 
+/* The “paper” is just a page (no rounded corners / no shadow in the PDF) */
 .paper {
-  width: min(860px, 100%);
-  background: var(--paper);
-  border: 1px solid var(--paper-edge);
-  border-radius: var(--radius);
-  box-shadow: 0 18px 50px var(--shadow);
-  position: relative;
-  overflow: hidden;
+  width: min(760px, 100%);
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* subtle paper grain */
-.paper::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 10%, rgba(0, 0, 0, 0.03), transparent 42%),
-    radial-gradient(circle at 80% 20%, rgba(0, 0, 0, 0.03), transparent 45%),
-    radial-gradient(circle at 40% 85%, rgba(0, 0, 0, 0.02), transparent 45%);
-  pointer-events: none;
-  mix-blend-mode: multiply;
-}
-
+/* Header mimics the PDF title area */
 .paperHeader {
-  position: relative;
-  padding: 22px 22px 14px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
+  padding: 18px 18px 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
 }
 
 .paperHeaderLeft {
-  min-width: 240px;
+  min-width: 0;
 }
 
 .paperKicker {
+  /* The PDF reads like title-case "Priority To-do Checklist" rather than the prior “PRIORITY / TO-DO” display */
   margin: 0;
-  letter-spacing: 0.22em;
-  font-weight: 700;
-  font-size: 11px;
-  color: var(--muted);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .paperTitle {
-  margin: 4px 0 0;
-  font-family: var(--title);
-  letter-spacing: -0.02em;
-  font-size: 44px;
-  line-height: 1;
-  font-weight: 900;
+  /* Hide the oversized display title; we use paperKicker as the PDF title line */
+  display: none;
 }
 
+/* PDF has "Date:" with an underline line */
 .paperSub {
-  margin: 8px 0 0;
-  font-size: 12px;
-  color: var(--muted);
-  letter-spacing: 0.02em;
+  margin: 2px 0 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: 0;
 }
 
 .paperDivider {
-  opacity: 0.55;
+  display: none;
 }
 
+.paperStat {
+  display: none;
+}
+
+/* Action buttons are not part of the PDF; keep them but visually minimal and out of the way */
 .paperHeaderRight {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-end;
+  gap: 8px;
 }
 
 .paperBtn {
   appearance: none;
-  border: 1px solid var(--rule-strong);
-  background: #fff;
+  border: 1px solid var(--line);
+  background: #ffffff;
   color: var(--ink);
-  border-radius: 12px;
-  padding: 9px 12px;
+  border-radius: 0;
+  padding: 6px 10px;
   font-size: 12px;
-  letter-spacing: 0.02em;
+  line-height: 1;
   cursor: pointer;
 }
 
 .paperBtn:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .paperBtn:disabled {
@@ -129,101 +110,96 @@
 }
 
 .paperBtnGhost {
-  background: transparent;
+  background: #ffffff;
 }
 
 .paperBtnSmall {
-  width: 34px;
-  height: 34px;
+  width: 26px;
+  height: 26px;
   padding: 0;
   display: inline-grid;
   place-items: center;
-  font-weight: 800;
+  font-weight: 700;
 }
 
+/* Body area spacing like a form */
 .paperBody {
-  position: relative;
-  padding: 0 22px 10px;
+  padding: 12px 18px 14px;
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
+/* Block title row like "# No. Top priority Status" in PDF */
 .block {
-  border-top: 1px solid var(--paper-edge);
-  padding-top: 14px;
+  padding-top: 0;
 }
 
 .blockHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 10px;
+  margin: 0 0 8px;
 }
 
 .blockTitle {
   margin: 0;
-  letter-spacing: 0.18em;
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
+/* Make hint smaller; PDF doesn’t show “Max …” as prominent */
 .blockHint {
-  margin: 5px 0 0;
+  margin: 2px 0 0;
+  font-size: 11px;
   color: var(--muted);
-  font-size: 12px;
 }
 
 .capacityNote {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
+  font-size: 11px;
   color: var(--muted);
-  font-size: 12px;
-  font-style: italic;
 }
 
+/* Table-like ruled list */
 .ruledList {
   margin: 0;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--paper-edge);
-  border-radius: 12px;
+
+  border: 1px solid var(--line);
+  border-radius: 0;
   overflow: hidden;
-  background: #fff;
+  background: #ffffff;
 }
 
+/* Rows become a strict grid like the PDF columns: [#] [Task] [Status] */
 .ruledRow {
   display: grid;
-  grid-template-columns: 36px 1fr auto;
+  grid-template-columns: 42px 1fr 110px;
   align-items: center;
-  gap: 10px;
-  padding: 12px 12px;
-  border-bottom: 1px solid var(--rule);
-  background:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 62%, rgba(17, 17, 17, 0.06) 62%, rgba(17, 17, 17, 0.06) 64%, rgba(0, 0, 0, 0) 64%, rgba(0, 0, 0, 0) 100%);
+  gap: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  background: #ffffff;
 }
 
 .ruledRow:last-child {
   border-bottom: none;
 }
 
-.ruledRow.isEmpty {
-  opacity: 0.9;
-}
-
-.ruledRow.isDone .ruledText {
-  text-decoration: line-through;
-  color: rgba(0, 0, 0, 0.45);
-}
-
+/* Left column: number area is where the checkbox sits in our app */
 .boxLabel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 28px;
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border-right: 1px solid var(--line);
   position: relative;
 }
 
+/* Keep checkbox usable but visually like an empty square in a form */
 .boxInput {
   position: absolute;
   opacity: 0;
@@ -233,89 +209,102 @@
 }
 
 .boxVisual {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--ink);
-  border-radius: 3px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line);
+  border-radius: 0;
   background: transparent;
   box-sizing: border-box;
 }
 
 .boxInput:focus-visible + .boxVisual {
-  outline: 3px solid rgba(0, 0, 0, 0.18);
+  outline: 2px solid rgba(0, 0, 0, 0.35);
   outline-offset: 2px;
 }
 
 .boxInput:checked + .boxVisual {
-  background: var(--ink);
-  box-shadow: inset 0 0 0 3px #fff;
+  background: #000000;
+  box-shadow: inset 0 0 0 3px #ffffff;
 }
 
+/* Middle column: task text */
 .ruledTextBtn {
   text-align: left;
   background: transparent;
   border: none;
-  padding: 0;
+  padding: 0 10px;
   color: inherit;
   cursor: pointer;
   font: inherit;
   min-width: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
 }
 
 .ruledText {
   display: block;
-  font-size: 15px;
-  line-height: 1.35;
-  letter-spacing: 0.01em;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0;
   word-break: break-word;
 }
 
-.ruledTextBtn:hover .ruledText {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: rgba(0, 0, 0, 0.3);
+/* Done state: subtle strike-through like a filled form */
+.ruledRow.isDone .ruledText {
+  text-decoration: line-through;
+  color: rgba(0, 0, 0, 0.65);
 }
 
+/* Empty placeholder (keeps row height consistent) */
 .ruledPlaceholder {
   display: block;
-  height: 18px;
+  height: 34px;
+  border-left: none;
 }
 
+/* Right column: status area; keep action buttons but confine to status column */
 .ruledActions {
+  height: 34px;
+  border-left: 1px solid var(--line);
+  padding: 0 8px;
   display: flex;
-  gap: 8px;
   align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .miniBtn {
   appearance: none;
-  border: 1px solid var(--paper-edge);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: #ffffff;
   color: var(--ink);
-  padding: 6px 8px;
-  border-radius: 10px;
+  padding: 3px 6px;
+  border-radius: 0;
   font-size: 11px;
+  line-height: 1;
   cursor: pointer;
 }
 
 .miniBtn:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .miniBtnDanger {
-  border-color: rgba(180, 35, 24, 0.25);
-  color: #b42318;
-  font-weight: 800;
+  border-color: #000000;
+  color: #000000;
+  font-weight: 700;
 }
 
 .ruledActionsSpacer {
-  width: 54px;
+  width: 1px;
   height: 1px;
 }
 
+/* Notes section: PDF has a "Notes" heading and then blank area (no ruled lines shown in extracted text) */
 .notesBlock {
-  border-top: 1px solid var(--paper-edge);
-  padding: 14px 22px 18px;
+  border-top: 1px solid var(--line);
+  padding: 12px 18px 16px;
 }
 
 .notesHeader {
@@ -323,50 +312,43 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .notesPaper {
   width: 100%;
   resize: vertical;
-  border: 1px solid var(--paper-edge);
-  border-radius: 12px;
-  padding: 12px 12px;
-  font-size: 14px;
-  line-height: 1.55;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.35;
   font-family: var(--font);
   color: var(--ink);
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      #fff 0px,
-      #fff 26px,
-      rgba(17, 17, 17, 0.06) 27px,
-      rgba(17, 17, 17, 0.06) 28px
-    );
+  background: #ffffff;
 }
 
 .notesPaper:focus {
-  outline: 3px solid rgba(0, 0, 0, 0.12);
+  outline: 2px solid rgba(0, 0, 0, 0.35);
   outline-offset: 2px;
 }
 
 .paperFooter {
-  border-top: 1px solid var(--paper-edge);
-  padding: 12px 22px 16px;
+  border-top: 1px solid var(--line);
+  padding: 10px 18px 12px;
 }
 
 .paperFooterText {
   margin: 0;
   font-size: 11px;
-  color: var(--muted);
+  color: var(--ink);
 }
 
-/* Modal (kept from previous UI; still acceptable and unobtrusive) */
+/* Modal kept, but make it more neutral/print-like */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(17, 24, 39, 0.55);
+  background: rgba(0, 0, 0, 0.35);
   display: grid;
   place-items: center;
   padding: 16px;
@@ -374,69 +356,68 @@
 
 .modal {
   width: min(560px, 100%);
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.25);
-  padding: 18px;
+  background: #ffffff;
+  border-radius: 0;
+  border: 1px solid #000000;
+  box-shadow: none;
+  padding: 16px;
 }
 
 .modalTitle {
-  margin: 0 0 12px;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .modalLabel {
   display: block;
-  color: rgba(0, 0, 0, 0.6);
+  color: #000000;
   font-size: 12px;
   margin-bottom: 6px;
 }
 
 .modalInput {
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.14);
-  border-radius: 12px;
-  padding: 12px;
-  font-size: 14px;
+  border: 1px solid #000000;
+  border-radius: 0;
+  padding: 10px;
+  font-size: 13px;
   font-family: var(--font);
 }
 
 .modalInput:focus {
-  outline: 3px solid rgba(0, 0, 0, 0.12);
+  outline: 2px solid rgba(0, 0, 0, 0.35);
   outline-offset: 2px;
 }
 
 .modalHelp {
   margin-top: 10px;
-  color: rgba(0, 0, 0, 0.55);
-  font-size: 12px;
+  color: #000000;
+  font-size: 11px;
 }
 
 .dot {
   margin: 0 8px;
-  opacity: 0.65;
+  opacity: 0.8;
 }
 
 .modalActions {
-  margin-top: 16px;
+  margin-top: 14px;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-/* Button styles used inside modal (kept for consistency) */
 .btn {
   appearance: none;
-  border: 1px solid rgba(0, 0, 0, 0.16);
-  background: #111827;
+  border: 1px solid #000000;
+  background: #000000;
   color: #ffffff;
-  padding: 10px 12px;
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 0;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -452,36 +433,31 @@
 }
 
 .btn-ghost {
-  background: transparent;
-  color: #111827;
+  background: #ffffff;
+  color: #000000;
 }
 
 .btn-danger {
-  border-color: rgba(180, 35, 24, 0.3);
-  background: #b42318;
-  color: #fff;
+  background: #ffffff;
+  color: #000000;
 }
 
+/* Mobile: allow status column to wrap under */
 @media (max-width: 640px) {
-  .paperHeader {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .paperHeaderRight {
-    justify-content: flex-start;
+  .paper {
+    width: min(760px, 100%);
   }
 
   .ruledRow {
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 42px 1fr;
     grid-template-areas:
       "check text"
       "check actions";
-    row-gap: 8px;
   }
 
   .boxLabel {
     grid-area: check;
+    border-right: 1px solid var(--line);
   }
 
   .ruledTextBtn,
@@ -491,6 +467,8 @@
 
   .ruledActions {
     grid-area: actions;
+    border-left: none;
+    border-top: 1px solid var(--line);
     justify-content: flex-start;
   }
 }
