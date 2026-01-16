@@ -472,3 +472,225 @@
     justify-content: flex-start;
   }
 }
+
+/* =========================
+   PRINT STYLES (PDF export)
+   ========================= */
+
+/* Screen-only / print-only helpers */
+.screen-only {
+  display: block;
+}
+
+.print-only {
+  display: none;
+}
+
+/* A small on-screen hint; never printed */
+.printHint {
+  max-width: 760px;
+  margin: 10px auto 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #000;
+  background: #fff;
+  border: 1px solid #000;
+}
+
+/* Print page setup */
+@page {
+  /* Most browsers will honor either A4 or Letter depending on the user's setting.
+     We keep margins explicit for predictable PDF export. */
+  margin: 0.65in;
+}
+
+@media print {
+  /* Force monochrome + remove all UI chrome */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    /* Slightly smaller to fit typical printable width */
+    font-size: 95%;
+    line-height: 1.25;
+  }
+
+  /* Remove any possible shadows/filters and ensure crisp rendering */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Show/hide helpers */
+  .screen-only {
+    display: none !important;
+  }
+
+  .print-only {
+    display: inline !important;
+  }
+
+  /* Generic "do not print" hook */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Avoid breaking critical headers/rows across pages */
+  .avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* App layout: remove preview padding and ensure it fits printable width */
+  .App {
+    min-height: auto;
+  }
+
+  .page {
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .paper {
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 1px solid #000 !important;
+    margin: 0 !important;
+  }
+
+  /* Prevent horizontal overflow in print/PDF engines */
+  .paper,
+  .paperBody,
+  .ruledList,
+  .ruledRow {
+    overflow: hidden !important;
+  }
+
+  /* Crisp, black rules everywhere */
+  :root {
+    --ink: #000000;
+    --muted: #000000;
+    --line: #000000;
+  }
+
+  .paperHeader,
+  .paperFooter,
+  .notesBlock,
+  .ruledList,
+  .ruledRow,
+  .boxLabel,
+  .ruledActions,
+  .notesPaper {
+    border-color: #000000 !important;
+  }
+
+  .ruledList {
+    border: 1px solid #000 !important;
+  }
+
+  .ruledRow {
+    border-bottom: 1px solid #000 !important;
+    /* Keep each row intact if possible */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .boxLabel {
+    border-right: 1px solid #000 !important;
+  }
+
+  .ruledActions {
+    border-left: 1px solid #000 !important;
+  }
+
+  /* Ensure checkbox prints as a form square; keep the filled state visible */
+  .boxInput {
+    opacity: 0 !important;
+  }
+
+  .boxVisual {
+    border: 1px solid #000 !important;
+    background: transparent !important;
+  }
+
+  .boxInput:checked + .boxVisual {
+    background: #000 !important;
+    box-shadow: inset 0 0 0 3px #fff !important;
+  }
+
+  /* Remove focus rings/tooltips/etc. from print output */
+  :focus,
+  :focus-visible {
+    outline: none !important;
+  }
+
+  [title] {
+    /* Avoid printing tooltip-like title rendering in some engines */
+  }
+
+  /* Hide interactive controls that shouldn't print */
+  button,
+  .paperBtn,
+  .paperBtnSmall,
+  .miniBtn,
+  .modalOverlay,
+  .modal,
+  .blockHint.no-print {
+    display: none !important;
+  }
+
+  /* But keep the task "text" visible (it is inside a button on screen) */
+  .ruledTextBtn {
+    display: flex !important;
+    border: none !important;
+    padding: 0 10px !important;
+    height: 34px !important;
+  }
+
+  /* Done state should remain legible in black */
+  .ruledRow.isDone .ruledText {
+    color: #000000 !important;
+    text-decoration: line-through;
+  }
+
+  /* Header/title stays at top without breaking */
+  .paperHeader {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Notes textarea should print as a box; ensure borders are crisp */
+  .notesPaper {
+    border: 1px solid #000 !important;
+  }
+
+  /* Print-only date placeholder formatting */
+  .dateLinePrint {
+    display: inline-block !important;
+    flex: 1;
+    white-space: nowrap;
+    transform: translateY(-2px);
+  }
+
+  /* If desired: force notes to new page in print by adding class on the notes section */
+  .print-notes-at-end {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  /* Avoid any accidental page scaling overflow */
+  img,
+  svg,
+  table,
+  pre,
+  code {
+    max-width: 100% !important;
+  }
+}

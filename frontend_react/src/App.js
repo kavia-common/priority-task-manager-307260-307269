@@ -172,18 +172,35 @@ function App() {
 
   return (
     <div className="App">
+      {/* Screen-only hint; never printed */}
+      <div className="printHint screen-only" role="note" aria-label="Print hint">
+        Tip: Use your browser’s Print / “Save as PDF”. The page is styled for clean A4/Letter output.
+      </div>
+
       <main className="page" aria-label="Priority to-do checklist">
         <div className="paper" role="document" aria-label="Checklist sheet">
-          <header className="paperHeader">
+          <header className="paperHeader avoid-break">
             <div className="paperHeaderLeft">
               <p className="paperKicker">Priority To-do Checklist</p>
-              <p className="paperSub">
+
+              <p className="paperSub avoid-break">
                 <span>Date:</span>
-                <span aria-hidden="true" style={{ flex: 1, borderBottom: "1px solid #000", height: 0, transform: "translateY(-2px)" }} />
+
+                {/* Screen version uses a real underline rule */}
+                <span
+                  className="dateLine screen-only"
+                  aria-hidden="true"
+                  style={{ flex: 1, borderBottom: "1px solid #000", height: 0, transform: "translateY(-2px)" }}
+                />
+
+                {/* Print version uses a predictable underlined placeholder (avoids layout glitches in some PDF engines) */}
+                <span className="dateLinePrint print-only" aria-hidden="true">
+                  ________________________________
+                </span>
               </p>
             </div>
 
-            <div className="paperHeaderRight" aria-label="Actions">
+            <div className="paperHeaderRight no-print" aria-label="Actions">
               <button className="paperBtn" type="button" onClick={() => addTask("top")} disabled={topAtCapacity}>
                 + Top
               </button>
@@ -222,10 +239,11 @@ function App() {
             />
           </div>
 
+          {/* Add .print-notes-at-end here if you want notes to start on a new printed page */}
           <section className="notesBlock" aria-label="Notes">
-            <div className="notesHeader">
+            <div className="notesHeader avoid-break">
               <h2 className="blockTitle">NOTES</h2>
-              <p className="blockHint">Saved locally</p>
+              <p className="blockHint no-print">Saved locally</p>
             </div>
             <textarea
               className="notesPaper"
@@ -236,7 +254,7 @@ function App() {
             />
           </section>
 
-          <footer className="paperFooter">
+          <footer className="paperFooter no-print">
             <p className="paperFooterText">Local-only checklist (browser storage).</p>
           </footer>
         </div>
@@ -244,7 +262,7 @@ function App() {
 
       {editing ? (
         <div
-          className="modalOverlay"
+          className="modalOverlay no-print"
           role="dialog"
           aria-modal="true"
           aria-labelledby="edit-title"
